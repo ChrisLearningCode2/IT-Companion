@@ -1,25 +1,14 @@
-# Welcome to your Lovable project
+# Welcome to my IT Companion project
 
 This project was built with [Lovable](https://lovable.dev).
 
 ## Build with Lovable
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+Because I am still learning. Now that I have the files. I am going to go through them and start adding and editing, This I have found has been the best practice for me. As I learn how the code reads, and understand then what the symbolks mean.
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+It also helps me learn, downloading, starting the npm and finding the local ports.
 
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
-
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
-```
+This is intended to be a portable app for field work. I assist local elders with computer issues. Mostly internet related. Since I know I lot but not everything. I am compiling my knowledge into a portal library for those occasions. 
 
 ## Built with
 
