@@ -1,0 +1,534 @@
+{
+  "version": 1,
+  "notebooks": [
+    {
+      "id": "n-8",
+      "name": "Windows Desktop",
+      "icon": "monitor",
+      "sections": [
+        {
+          "id": "s-3",
+          "name": "How-To",
+          "pages": [
+            {
+              "id": "p-0",
+              "title": "Map a network drive",
+              "content": "# Map a network drive\n\n**GUI:** File Explorer → This PC → *Map network drive* → choose a letter → enter \\\\server\\share → tick *Reconnect at sign-in*.\n\n**Command line:**\n~~~cmd\nnet use Z: \\\\fileserver\\shared /persistent:yes\nnet use            :: list mapped drives\nnet use Z: /delete :: remove\n~~~\n\n**PowerShell:**\n~~~powershell\nNew-PSDrive -Name Z -PSProvider FileSystem -Root \"\\\\fileserver\\shared\" -Persist\n~~~\n> Tip: if it fails with *System error 53*, the server name can't be resolved — test with ping / nslookup.",
+              "updated": 0
+            },
+            {
+              "id": "p-1",
+              "title": "Add a printer by IP",
+              "content": "# Add a printer by IP\n\n1. Settings → Bluetooth & devices → Printers & scanners → **Add device**.\n2. Click *Add manually* → **Add a printer using an IP address or hostname**.\n3. Enter the IP, let Windows detect the driver (or choose *Have Disk*).\n\n~~~powershell\nAdd-PrinterPort -Name \"IP_10.0.0.50\" -PrinterHostAddress \"10.0.0.50\"\nAdd-Printer -Name \"Office-MFP\" -DriverName \"Microsoft IPP Class Driver\" -PortName \"IP_10.0.0.50\"\n~~~",
+              "updated": 0
+            },
+            {
+              "id": "p-2",
+              "title": "Create a local admin account",
+              "content": "# Create a local admin account\n\n~~~powershell\n$pw = Read-Host -AsSecureString \"Password\"\nNew-LocalUser -Name \"itadmin\" -Password $pw -FullName \"IT Admin\"\nAdd-LocalGroupMember -Group \"Administrators\" -Member \"itadmin\"\n~~~\nCMD alternative:\n~~~cmd\nnet user itadmin * /add\nnet localgroup Administrators itadmin /add\n~~~",
+              "updated": 0
+            }
+          ]
+        },
+        {
+          "id": "s-7",
+          "name": "Troubleshooting",
+          "pages": [
+            {
+              "id": "p-4",
+              "title": "Slow PC checklist",
+              "content": "# Slow PC checklist\n\n1. **Task Manager** (Ctrl+Shift+Esc) → sort by CPU, Memory, Disk.\n2. Startup apps tab → disable unneeded items.\n3. Check free disk space (keep >15%).\n4. Run system file repair:\n~~~cmd\nsfc /scannow\nDISM /Online /Cleanup-Image /RestoreHealth\n~~~\n5. Check for pending Windows Updates and reboot.\n6. Run *Disk Cleanup* (cleanmgr) → Clean up system files.\n7. Check Event Viewer → Windows Logs → System for disk/driver errors.",
+              "updated": 0
+            },
+            {
+              "id": "p-5",
+              "title": "No internet / network reset",
+              "content": "# No internet\n\n~~~cmd\nipconfig /all          :: do we have an IP? 169.254.x.x = no DHCP\nping 8.8.8.8           :: raw connectivity\nping google.com        :: DNS working?\nipconfig /release && ipconfig /renew\nipconfig /flushdns\nnetsh winsock reset\nnetsh int ip reset\n~~~\nReboot after winsock/ip reset. Last resort: Settings → Network → Advanced → **Network reset**.",
+              "updated": 0
+            },
+            {
+              "id": "p-6",
+              "title": "Blue screen (BSOD)",
+              "content": "# Blue screen\n\n- Note the **stop code** (e.g. IRQL_NOT_LESS_OR_EQUAL).\n- Dumps live in C:\\Windows\\Minidump — open with **WinDbg** (!analyze -v).\n- Recent driver/update? Roll back via Device Manager or uninstall update.\n- Test RAM: *mdsched.exe*. Test disk: chkdsk C: /f /r\n- Boot to Safe Mode: hold Shift while clicking Restart → Troubleshoot → Startup Settings.",
+              "updated": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "n-e",
+      "name": "macOS",
+      "icon": "apple",
+      "sections": [
+        {
+          "id": "s-b",
+          "name": "How-To",
+          "pages": [
+            {
+              "id": "p-9",
+              "title": "Useful shortcuts & basics",
+              "content": "# macOS basics\n\n| Action | Shortcut |\n|---|---|\n| Spotlight search | Cmd + Space |\n| Force quit | Cmd + Option + Esc |\n| Screenshot area | Cmd + Shift + 4 |\n| Lock screen | Ctrl + Cmd + Q |\n| Show hidden files (Finder) | Cmd + Shift + . |\n\nTerminal is in Applications → Utilities.",
+              "updated": 0
+            },
+            {
+              "id": "p-a",
+              "title": "Terminal commands",
+              "content": "# macOS Terminal\n\n~~~bash\nsw_vers                         # macOS version\nsystem_profiler SPHardwareDataType\nsoftwareupdate -l               # list updates\nsudo softwareupdate -ia         # install all\nnetworksetup -listallhardwareports\nsudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder   # flush DNS\ndiskutil list\nprofiles status -type enrollment   # MDM enrolment status\n~~~",
+              "updated": 0
+            }
+          ]
+        },
+        {
+          "id": "s-d",
+          "name": "Troubleshooting",
+          "pages": [
+            {
+              "id": "p-c",
+              "title": "Mac won't boot / reset",
+              "content": "# Recovery options (Apple silicon)\n\n- **Recovery:** hold power button until *Loading startup options* → Options.\n- **Safe mode:** at startup options, hold Shift and click Continue.\n- **Disk Utility → First Aid** on the startup disk.\n- Intel Macs: Cmd+R (recovery), reset NVRAM with Option+Cmd+P+R.",
+              "updated": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "n-j",
+      "name": "Mobile Phones",
+      "icon": "smartphone",
+      "sections": [
+        {
+          "id": "s-g",
+          "name": "iPhone / iOS",
+          "pages": [
+            {
+              "id": "p-f",
+              "title": "Common iPhone fixes",
+              "content": "# iPhone fixes\n\n- **Force restart:** Volume Up, Volume Down, then hold Side button.\n- **Reset network settings:** Settings → General → Transfer or Reset → Reset → Reset Network Settings.\n- **Mail not syncing:** remove & re-add account; check Settings → Mail → Accounts → Fetch New Data.\n- **Check MDM profile:** Settings → General → VPN & Device Management.",
+              "updated": 0
+            }
+          ]
+        },
+        {
+          "id": "s-i",
+          "name": "Android",
+          "pages": [
+            {
+              "id": "p-h",
+              "title": "Common Android fixes",
+              "content": "# Android fixes\n\n- Safe mode: hold power → long-press *Power off* → Safe mode.\n- Clear app cache: Settings → Apps → [app] → Storage → Clear cache.\n- Reset network: Settings → System → Reset options → Reset Wi-Fi, mobile & Bluetooth.\n- Work profile (Intune): apps with a briefcase icon are managed.",
+              "updated": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "n-q",
+      "name": "Active Directory",
+      "icon": "network",
+      "sections": [
+        {
+          "id": "s-n",
+          "name": "Users & Groups",
+          "pages": [
+            {
+              "id": "p-k",
+              "title": "Unlock / reset user",
+              "content": "# Unlock & reset a user\n\n~~~powershell\nImport-Module ActiveDirectory\nSearch-ADAccount -LockedOut | Select Name, SamAccountName\nUnlock-ADAccount -Identity jsmith\nSet-ADAccountPassword -Identity jsmith -Reset -NewPassword (Read-Host -AsSecureString \"New pw\")\nSet-ADUser -Identity jsmith -ChangePasswordAtLogon $true\n~~~\nGUI: **Active Directory Users and Computers** (dsa.msc) → right-click user → Reset Password.",
+              "updated": 0
+            },
+            {
+              "id": "p-l",
+              "title": "Create user & add to group",
+              "content": "# Create user\n\n~~~powershell\nNew-ADUser -Name \"Jane Doe\" -GivenName Jane -Surname Doe `\n  -SamAccountName jdoe -UserPrincipalName jdoe@contoso.com `\n  -Path \"OU=Staff,DC=contoso,DC=com\" `\n  -AccountPassword (Read-Host -AsSecureString \"Password\") -Enabled $true\nAdd-ADGroupMember -Identity \"Sales\" -Members jdoe\nGet-ADPrincipalGroupMembership jdoe | Select Name\n~~~",
+              "updated": 0
+            },
+            {
+              "id": "p-m",
+              "title": "Useful AD queries",
+              "content": "# AD queries\n\n~~~powershell\nGet-ADUser jdoe -Properties *                     # everything about a user\nGet-ADUser -Filter {Enabled -eq $false}           # disabled users\nSearch-ADAccount -AccountInactive -TimeSpan 90.00:00:00 -UsersOnly\nGet-ADGroupMember \"Domain Admins\"\nGet-ADComputer -Filter * | Measure-Object\n~~~\nCMD: whoami /groups, gpresult /r, nltest /dsgetdc:contoso.com",
+              "updated": 0
+            }
+          ]
+        },
+        {
+          "id": "s-p",
+          "name": "Group Policy",
+          "pages": [
+            {
+              "id": "p-o",
+              "title": "Group Policy basics",
+              "content": "# Group Policy\n\n- Manage with **gpmc.msc**. Link GPOs to OUs.\n- Force update on a client: gpupdate /force\n- See what applied: gpresult /r or gpresult /h report.html\n- Order of processing: Local → Site → Domain → OU (LSDOU). Last one wins.",
+              "updated": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "n-v",
+      "name": "Microsoft Intune",
+      "icon": "shield",
+      "sections": [
+        {
+          "id": "s-u",
+          "name": "Devices",
+          "pages": [
+            {
+              "id": "p-r",
+              "title": "Enroll & sync a device",
+              "content": "# Enrol & sync\n\n- **Windows:** Settings → Accounts → Access work or school → Connect (or Entra join at OOBE / Autopilot).\n- **iOS/Android:** install *Company Portal*, sign in.\n- **Force sync (Windows):** Settings → Accounts → Access work or school → Info → **Sync**.\n- **Admin:** intune.microsoft.com → Devices → [device] → Sync.\n\n~~~powershell\n# Check Entra/Intune join state\ndsregcmd /status\n~~~\nLook for AzureAdJoined : YES and MDMUrl populated.",
+              "updated": 0
+            },
+            {
+              "id": "p-s",
+              "title": "Deploy an app (Win32)",
+              "content": "# Deploy a Win32 app\n\n1. Package with **IntuneWinAppUtil.exe** → .intunewin file.\n2. Intune → Apps → Windows → Add → *Windows app (Win32)*.\n3. Install command e.g. setup.exe /S, uninstall command, detection rule (file/registry/MSI code).\n4. Assign to a group as *Required* or *Available*.\n5. Logs on client: C:\\ProgramData\\Microsoft\\IntuneManagementExtension\\Logs",
+              "updated": 0
+            },
+            {
+              "id": "p-t",
+              "title": "Compliance & troubleshooting",
+              "content": "# Compliance troubleshooting\n\n- Device shows *Not compliant* → open device → Device compliance → see failing setting.\n- Common: BitLocker off, OS too old, no password, Defender out of date.\n- Client event logs: Event Viewer → Applications and Services → Microsoft → Windows → DeviceManagement-Enterprise-Diagnostics-Provider.\n- Collect diagnostics: Intune → device → **Collect diagnostics**.",
+              "updated": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "n-13",
+      "name": "Microsoft 365",
+      "icon": "mail",
+      "sections": [
+        {
+          "id": "s-x",
+          "name": "Outlook",
+          "pages": [
+            {
+              "id": "p-w",
+              "title": "Outlook troubleshooting",
+              "content": "# Outlook\n\n- Start in safe mode: outlook.exe /safe\n- Reset nav pane: outlook.exe /resetnavpane\n- New profile: Control Panel → Mail (Microsoft Outlook) → Show Profiles → Add.\n- Repair OST: close Outlook, rename/delete the .ost in %localappdata%\\Microsoft\\Outlook — it rebuilds.\n- Quick Repair Office: Settings → Apps → Microsoft 365 → Modify → Quick Repair.",
+              "updated": 0
+            }
+          ]
+        },
+        {
+          "id": "s-10",
+          "name": "Teams & OneDrive",
+          "pages": [
+            {
+              "id": "p-y",
+              "title": "Clear Teams cache",
+              "content": "# Clear new Teams cache\n\nQuit Teams, then:\n~~~powershell\nRemove-Item \"$env:LOCALAPPDATA\\Packages\\MSTeams_8wekyb3d8bbwe\\LocalCache\\Microsoft\\MSTeams\\*\" -Recurse -Force\n~~~\nRestart Teams.",
+              "updated": 0
+            },
+            {
+              "id": "p-z",
+              "title": "Reset OneDrive",
+              "content": "# Reset OneDrive\n\n~~~cmd\n%localappdata%\\Microsoft\\OneDrive\\onedrive.exe /reset\n~~~\nIf it does not restart within a few minutes, launch OneDrive from the Start menu.",
+              "updated": 0
+            }
+          ]
+        },
+        {
+          "id": "s-12",
+          "name": "Exchange Online",
+          "pages": [
+            {
+              "id": "p-11",
+              "title": "Exchange Online PowerShell",
+              "content": "# Exchange Online\n\n~~~powershell\nInstall-Module ExchangeOnlineManagement\nConnect-ExchangeOnline -UserPrincipalName admin@contoso.com\nGet-Mailbox jdoe | fl\nAdd-MailboxPermission -Identity shared@contoso.com -User jdoe -AccessRights FullAccess\nSet-Mailbox jdoe -ForwardingSmtpAddress boss@contoso.com\nGet-MessageTrace -SenderAddress jdoe@contoso.com -StartDate (Get-Date).AddDays(-2) -EndDate (Get-Date)\n~~~",
+              "updated": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "n-1a",
+      "name": "Alternative Apps",
+      "icon": "package",
+      "sections": [
+        {
+          "id": "s-15",
+          "name": "7-Zip",
+          "pages": [
+            {
+              "id": "p-14",
+              "title": "Using 7-Zip",
+              "content": "# 7-Zip\n\n**Right-click** a file → 7-Zip → *Add to archive* / *Extract Here* / *Extract to \"folder\\\"*.\n\nPassword-protect: Add to archive → Encryption → set password, use **AES-256**, tick *Encrypt file names* (7z format).\n\n~~~cmd\n7z a backup.7z C:\\Data\\*          :: create\n7z x backup.7z -oC:\\Restore        :: extract with folders\n7z l backup.7z                     :: list contents\n7z a -p -mhe=on secret.7z file.txt :: password + hide names\n7z t backup.7z                     :: test integrity\n~~~\n**Troubleshoot:** *CRC failed* = corrupt/incomplete download. *Cannot open as archive* = wrong format or split archive (open the .001 file).",
+              "updated": 0
+            }
+          ]
+        },
+        {
+          "id": "s-17",
+          "name": "LibreOffice",
+          "pages": [
+            {
+              "id": "p-16",
+              "title": "Using LibreOffice",
+              "content": "# LibreOffice\n\nApps: **Writer** (Word), **Calc** (Excel), **Impress** (PowerPoint), Draw, Base.\n\n- Save as Microsoft format by default: Tools → Options → Load/Save → General → *Always save as* → Word/Excel.\n- Export PDF: File → Export As → Export as PDF.\n- Convert from command line:\n~~~cmd\nsoffice --headless --convert-to pdf report.docx\nsoffice --headless --convert-to xlsx data.ods\n~~~\n**Troubleshoot:**\n- Crashes on start → reset profile: Help → Restart in Safe Mode → Reset to factory settings.\n- Fonts look wrong in .docx → install Carlito/Caladea (Calibri/Cambria metric-compatible).\n- Slow → Tools → Options → Advanced → disable Java if unused.",
+              "updated": 0
+            }
+          ]
+        },
+        {
+          "id": "s-19",
+          "name": "PDF-XChange",
+          "pages": [
+            {
+              "id": "p-18",
+              "title": "Using PDF-XChange Editor",
+              "content": "# PDF-XChange Editor\n\n- **Edit text:** Edit tab → Edit Content → Text.\n- **Fill & sign:** Protect tab → Add Signature / Sign Document.\n- **Combine PDFs:** File → New Document → *Combine Files into a Single PDF*.\n- **OCR:** Convert tab → OCR Pages (makes scans searchable).\n- **Redact:** Protect → Mark for Redaction → Apply All Redactions.\n\n**Troubleshoot:**\n- Watermark on output → you used a PRO feature in the free version (features are marked with a badge).\n- Not default PDF app → Windows Settings → Default apps → .pdf.\n- Printing issues → File → Print → Advanced → *Print as image*.\n- Reset settings: Edit → Preferences → *Reset all*.",
+              "updated": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "n-1k",
+      "name": "Command Library",
+      "icon": "terminal",
+      "sections": [
+        {
+          "id": "s-1c",
+          "name": "CMD",
+          "pages": [
+            {
+              "id": "p-1b",
+              "title": "Essential CMD commands",
+              "content": "# CMD essentials\n\n~~~cmd\nipconfig /all                  :: network config\nping -t host                   :: continuous ping\ntracert host                   :: route path\nnslookup host                  :: DNS lookup\nnetstat -ano                   :: open ports + PIDs\ntasklist | findstr chrome      :: find process\ntaskkill /PID 1234 /F          :: kill process\nsysteminfo                     :: OS/hardware summary\nwmic bios get serialnumber     :: serial number\nshutdown /r /t 0               :: restart now\nrobocopy C:\\src D:\\dst /MIR /R:1 /W:1   :: mirror folders\nchkdsk C: /f                   :: check disk\n~~~",
+              "updated": 0
+            }
+          ]
+        },
+        {
+          "id": "s-1h",
+          "name": "PowerShell",
+          "pages": [
+            {
+              "id": "p-1d",
+              "title": "PowerShell essentials",
+              "content": "# PowerShell essentials\n\n~~~powershell\nGet-Help Get-Process -Examples        # learn any command\nGet-Command *service*                 # find commands\nGet-Service | Where Status -eq Running\nRestart-Service Spooler               # fix stuck print queue\nGet-Process | Sort CPU -Desc | Select -First 10\nTest-NetConnection server -Port 443   # port test\nGet-CimInstance Win32_OperatingSystem | Select Caption, LastBootUpTime\nGet-ChildItem C:\\ -Recurse -File | Sort Length -Desc | Select -First 20 FullName, Length\nGet-WinEvent -LogName System -MaxEvents 50\nGet-ComputerInfo\n~~~",
+              "updated": 0
+            },
+            {
+              "id": "p-1e",
+              "title": "Script: clean temp files (explained)",
+              "content": "# Script: clean temp files\n\n**Goal:** free disk space by deleting temp files older than 7 days.\n\n~~~powershell\n# 1. Define folders to clean\n$paths = @(\"$env:TEMP\", \"C:\\Windows\\Temp\")\n\n# 2. Files older than this date will be removed\n$cutoff = (Get-Date).AddDays(-7)\n\nforeach ($p in $paths) {\n    # 3. Find files recursively, ignore access errors\n    Get-ChildItem $p -Recurse -File -ErrorAction SilentlyContinue |\n        Where-Object { $_.LastWriteTime -lt $cutoff } |\n        # 4. Delete; -WhatIf first to preview!\n        Remove-Item -Force -ErrorAction SilentlyContinue\n}\nWrite-Host \"Cleanup complete\"\n~~~\n**How it works:** gets each file, filters by age, pipes to Remove-Item. Add -WhatIf to Remove-Item to test safely first. Run as admin for C:\\Windows\\Temp.",
+              "updated": 0
+            },
+            {
+              "id": "p-1f",
+              "title": "Script: bulk-create AD users from CSV",
+              "content": "# Script: bulk-create AD users\n\nCSV (users.csv): First,Last,Sam,Dept\n\n~~~powershell\nImport-Module ActiveDirectory\n$pw = Read-Host -AsSecureString \"Initial password\"\n\nImport-Csv .\\users.csv | ForEach-Object {\n    # Build each user from the CSV row\n    New-ADUser -Name \"$($_.First) $($_.Last)\" `\n        -GivenName $_.First -Surname $_.Last `\n        -SamAccountName $_.Sam `\n        -UserPrincipalName \"$($_.Sam)@contoso.com\" `\n        -Department $_.Dept `\n        -AccountPassword $pw -Enabled $true -ChangePasswordAtLogon $true\n    Write-Host \"Created $($_.Sam)\"\n}\n~~~\n**Explained:** Import-Csv turns each line into an object; $_ is the current row; backticks continue a line.",
+              "updated": 0
+            },
+            {
+              "id": "p-1g",
+              "title": "Script: inventory report to CSV",
+              "content": "# Script: PC inventory\n\n~~~powershell\n$os  = Get-CimInstance Win32_OperatingSystem\n$cs  = Get-CimInstance Win32_ComputerSystem\n$bios= Get-CimInstance Win32_BIOS\n[PSCustomObject]@{\n  Computer = $env:COMPUTERNAME\n  User     = $cs.UserName\n  Model    = $cs.Model\n  Serial   = $bios.SerialNumber\n  OS       = $os.Caption\n  RAMGB    = [math]::Round($cs.TotalPhysicalMemory/1GB,1)\n  LastBoot = $os.LastBootUpTime\n} | Export-Csv \"$env:USERPROFILE\\Desktop\\inventory.csv\" -NoTypeInformation\n~~~\n**Explained:** CIM queries hardware info; PSCustomObject builds one tidy row; Export-Csv writes it for Excel.",
+              "updated": 0
+            }
+          ]
+        },
+        {
+          "id": "s-1j",
+          "name": "Bash / zsh",
+          "pages": [
+            {
+              "id": "p-1i",
+              "title": "Bash essentials",
+              "content": "# Bash / zsh essentials\n\n~~~bash\nls -la          # list incl. hidden\ncd ~/Downloads\ncp -r src dst   # copy folder\ngrep -ri \"error\" /var/log\ntop             # live processes\nps aux | grep app\nkill -9 1234\ndf -h           # disk space\ndu -sh *        # folder sizes\ncurl -I https://example.com\nchmod +x script.sh\n~~~",
+              "updated": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "n-1o",
+      "name": "Protocols & Ports",
+      "icon": "book",
+      "sections": [
+        {
+          "id": "s-1n",
+          "name": "Reference",
+          "pages": [
+            {
+              "id": "p-1l",
+              "title": "Common ports",
+              "content": "# Common ports\n\n| Port | Protocol | Use |\n|---|---|---|\n| 20/21 | FTP | File transfer |\n| 22 | SSH/SFTP | Secure shell |\n| 23 | Telnet | Insecure remote |\n| 25 | SMTP | Mail sending |\n| 53 | DNS | Name resolution |\n| 67/68 | DHCP | IP assignment |\n| 80 | HTTP | Web |\n| 88 | Kerberos | AD auth |\n| 110 | POP3 | Mail retrieval |\n| 123 | NTP | Time sync |\n| 143 | IMAP | Mail |\n| 389 / 636 | LDAP / LDAPS | Directory |\n| 443 | HTTPS | Secure web |\n| 445 | SMB | File sharing |\n| 587 | SMTP submission | Mail (TLS) |\n| 3389 | RDP | Remote desktop |",
+              "updated": 0
+            },
+            {
+              "id": "p-1m",
+              "title": "Protocol basics",
+              "content": "# Protocol basics\n\n- **TCP** — reliable, connection based (web, mail, SMB).\n- **UDP** — fast, no guarantee (DNS, DHCP, VoIP, streaming).\n- **DNS** — name → IP. Records: A, AAAA, CNAME, MX, TXT, SRV.\n- **DHCP** — DORA: Discover, Offer, Request, Acknowledge.\n- **Kerberos** — AD login tickets; needs clocks within 5 minutes.\n- **Private IP ranges:** 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16. 169.254.x.x = APIPA (no DHCP).",
+              "updated": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "n-23",
+      "name": "Field Kit",
+      "icon": "wrench",
+      "sections": [
+        {
+          "id": "s-1s",
+          "name": "Helping at home",
+          "pages": [
+            {
+              "id": "p-1p",
+              "title": "First-visit checklist",
+              "content": "# First visit at someone's home\n\n**Before touching anything:**\n- Ask them to show you the problem themselves — watch what they actually do.\n- Write down (here!) passwords they give you, or better: set up a password manager with them.\n- Check backups exist *before* changing settings.\n\n**Quick health pass:**\n1. Updates pending? (Windows Update / System Settings → Software Update)\n2. Disk nearly full? Keep 15%+ free.\n3. Browser: how many toolbars/extensions? Remove junk.\n4. Startup apps: disable everything they don't recognise.\n5. Antivirus: is one actually installed and current?\n\n**Leave behind:** a note with what you did + your phone number. Elderly users relax when they can read what changed.",
+              "updated": 0
+            },
+            {
+              "id": "p-1q",
+              "title": "Common elderly-user fixes",
+              "content": "# Fixes that solve 80% of home visits\n\n- **\"Internet is gone\"** → router unplugged or Wi-Fi toggled off (Fn key / airplane mode). Check the physical basics first.\n- **\"Everything is huge/tiny\"** → display scaling changed. Settings → Display → Scale 100%/125%. Browser zoom: Ctrl+0 resets.\n- **\"My files vanished\"** → usually OneDrive backup moved Desktop/Documents into OneDrive. Check the OneDrive folder.\n- **\"Email stopped\"** → password expired or changed on phone but not PC. Re-enter in the mail app.\n- **\"Computer is slow\"** → 30 browser tabs + never rebooted. Show them how to restart (not just close the lid).\n- **Scam check:** look for remote-access tools (AnyDesk, TeamViewer, QuickAssist) they didn't install — remove them and talk about phone scams.\n- **Printer:** is it on the same Wi-Fi as the PC? Reboot printer + router before reinstalling drivers.",
+              "updated": 0
+            },
+            {
+              "id": "p-1r",
+              "title": "Set up a new PC for someone",
+              "content": "# New PC handover\n\n1. Run through Windows setup; create *their* Microsoft account (write the password down together).\n2. Install updates fully before anything else.\n3. Install: browser of choice, PDF reader, 7-Zip, LibreOffice (free Office alternative).\n4. Move files from the old machine (USB disk or network share).\n5. Set up mail, printer, and their 3 favourite websites as bookmarks.\n6. Turn on OneDrive or another backup — explain it in one sentence.\n7. Create a second local admin account for yourself (see Windows Desktop notebook) so you can fix things later.\n8. Show them: restart, volume, Wi-Fi icon. That's it — don't overload.",
+              "updated": 0
+            }
+          ]
+        },
+        {
+          "id": "s-1x",
+          "name": "Small office network",
+          "pages": [
+            {
+              "id": "p-1t",
+              "title": "Plan a small network",
+              "content": "# Small office network plan\n\n**Typical layout:**\n~~~text\nInternet → ISP modem/router → firewall/router → switch → PCs, printers, APs\n~~~\n\n**Checklist:**\n1. Count devices: PCs + printers + phones + Wi-Fi clients + spare ports.\n2. Switch: at least that many ports, gigabit, plus 20% headroom.\n3. Wi-Fi: one access point per ~15 users or per floor/room cluster.\n4. IP plan: router at 192.168.1.1, DHCP range .100–.199, reserve .10–.49 for printers/servers (static or DHCP reservation).\n5. Label every cable both ends. Future-you says thanks.\n6. Document: ISP login, router admin password, Wi-Fi password — store in this KB.\n\n**Rule of thumb:** if the ISP router is doing Wi-Fi + routing + DHCP for a business, replace its Wi-Fi with a real access point.",
+              "updated": 0
+            },
+            {
+              "id": "p-1u",
+              "title": "Router & Wi-Fi setup",
+              "content": "# Router & Wi-Fi setup\n\n1. Connect to router admin page (usually 192.168.0.1 or 192.168.1.1).\n2. **Change the admin password** first. Always.\n3. Update firmware.\n4. Set WAN: DHCP from ISP, or PPPoE/static if the ISP gave details.\n5. LAN: enable DHCP, set the range, add reservations for printers/NAS.\n6. Wi-Fi: WPA2-AES or WPA3, one SSID, strong passphrase. Disable WPS.\n7. Guest Wi-Fi: separate SSID, client isolation on.\n8. Disable remote admin from the internet unless needed.\n\n**Test after:** wired PC gets internet, Wi-Fi client gets internet, printer reachable from all PCs, speed test near the AP and at the far desk.",
+              "updated": 0
+            },
+            {
+              "id": "p-1v",
+              "title": "Diagnose office network issues",
+              "content": "# \"The network is down\" — where to look\n\n**One device affected:**\n~~~cmd\nipconfig /all        :: has an IP? 169.254.x.x = no DHCP\nping 192.168.1.1     :: can it reach the router?\nping 8.8.8.8         :: router reaches internet?\nping google.com      :: DNS working?\n~~~\n- No IP → cable/switch port/DHCP. Try another port.\n- IP but no router ping → cable, VLAN, or NIC.\n- Router pings, no internet → ISP or WAN config. Check modem lights.\n- Internet by IP but not by name → DNS. Set 1.1.1.1 / 8.8.8.8 to test.\n\n**Everyone affected:** modem/router/switch power and lights → reboot in order: modem, wait 2 min, router, switch. Still down → call the ISP with your findings written down.",
+              "updated": 0
+            },
+            {
+              "id": "p-1w",
+              "title": "NAS / file sharing basics",
+              "content": "# Simple file sharing for a small office\n\n**Easiest options:**\n- A NAS (Synology/QNAP) with one shared folder per team.\n- Or share a folder from one always-on Windows PC.\n\n**Windows share:**\n~~~powershell\nNew-SmbShare -Name \"Office\" -Path \"D:\\Office\" -FullAccess \"Everyone\"\n# then tighten NTFS permissions on the folder itself\n~~~\n\n**Map it on each PC:**\n~~~cmd\nnet use O: \\\\NAS\\Office /persistent:yes\n~~~\n\n**Must-dos:**\n- Turn on the NAS recycle bin / snapshots — that is your \"undelete\".\n- Set up backup of the share to USB disk or cloud. RAID is not backup.\n- Give each person their own login; avoid one shared account.",
+              "updated": 0
+            }
+          ]
+        },
+        {
+          "id": "s-22",
+          "name": "Email setup",
+          "pages": [
+            {
+              "id": "p-1y",
+              "title": "Choose an email setup",
+              "content": "# Email for a small company\n\n**Realistic options:**\n| Option | Cost | When |\n|---|---|---|\n| Microsoft 365 Business Basic | ~$6/user/mo | Want Exchange, Teams, 1TB OneDrive |\n| Google Workspace Starter | ~$6/user/mo | Prefer Gmail/Drive |\n| Zoho Mail | free–$1/user/mo | Tiny budget, just mail |\n| ISP/free mailbox | free | One person, non-critical only |\n\n**Recommendation:** for a business, pay for Microsoft 365 or Google Workspace. You get proper spam filtering, backups, and support. Running your own mail server at a small office is almost never worth it — deliverability and security upkeep eat your time.\n\n**You need:** a domain name (e.g. company.com) before anything else.",
+              "updated": 0
+            },
+            {
+              "id": "p-1z",
+              "title": "DNS records for email",
+              "content": "# DNS records that make email work\n\nSet these at the domain's DNS host (registrar or Cloudflare):\n\n| Type | Name | Value | Purpose |\n|---|---|---|---|\n| MX | @ | mail provider's server | where mail arrives |\n| TXT | @ | v=spf1 include:... -all | who may send for you |\n| TXT | selector._domainkey | DKIM key from provider | signed mail |\n| TXT | _dmarc | v=DMARC1; p=quarantine | anti-spoofing policy |\n\n**Microsoft 365** gives you exact values in the admin center → Settings → Domains.\n**Google Workspace** → Admin console → Apps → Gmail → Authenticate email.\n\n**Check your work:**\n~~~cmd\nnslookup -type=MX company.com\nnslookup -type=TXT company.com\n~~~\nDNS changes can take minutes to 24h to propagate.",
+              "updated": 0
+            },
+            {
+              "id": "p-20",
+              "title": "Set up mail on devices",
+              "content": "# Add mail to phones & PCs\n\n**Modern accounts (M365/Google):** just sign in — Outlook, Apple Mail and Gmail apps autodiscover everything.\n\n**Manual/IMAP settings (when asked):**\n- IMAP (incoming): provider's server, port **993**, SSL/TLS\n- SMTP (outgoing): provider's server, port **587**, STARTTLS\n- Username = full email address\n\n**Microsoft 365 manual:**\n- IMAP: outlook.office365.com:993\n- SMTP: smtp.office365.com:587\n\n**POP3 vs IMAP:** choose IMAP — mail stays on the server and syncs to every device. POP3 downloads to one device only.\n\n**Test after setup:** send a mail out, send one in from another account, reply to it. All three must work.",
+              "updated": 0
+            },
+            {
+              "id": "p-21",
+              "title": "Email problems cheat sheet",
+              "content": "# \"Email isn't working\"\n\n**Can't send:**\n- Check SMTP settings + password (see device setup page).\n- \"Relay denied\" → outgoing authentication not enabled.\n- Sent but never arrives → check Junk on the other side; check SPF/DKIM records.\n\n**Can't receive:**\n- Mailbox full? (very common)\n- MX record correct? nslookup -type=MX domain.com\n- Check provider's webmail — if mail is there, the device settings are wrong, not the server.\n\n**Password loops on one device only:** delete the account from that device and re-add it.\n\n**\"We got hacked / sent spam\":** change the password immediately, enable MFA, check for forwarding rules the user didn't create (Outlook → Settings → Mail → Rules and Forwarding).",
+              "updated": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "n-27",
+      "name": "Troubleshooting",
+      "icon": "wrench",
+      "sections": [
+        {
+          "id": "s-26",
+          "name": "Method",
+          "pages": [
+            {
+              "id": "p-24",
+              "title": "Troubleshooting methodology",
+              "content": "# Troubleshooting method\n\n1. **Identify** the problem — ask: what changed? who is affected? error message?\n2. **Theory** of probable cause — start simple (power, cable, reboot).\n3. **Test** the theory.\n4. **Plan** & implement the fix.\n5. **Verify** full functionality.\n6. **Document** it — here in the knowledge base!",
+              "updated": 0
+            },
+            {
+              "id": "p-25",
+              "title": "Ticket template",
+              "content": "# Ticket notes template\n\n- **User / device:**\n- **Issue:**\n- **Error message:**\n- **Started when:**\n- **Steps tried:**\n- **Resolution:**\n- **Time spent:**",
+              "updated": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kgk1hakdr0kw",
+      "name": "How to clear DNS cache",
+      "icon": "folder",
+      "sections": [
+        {
+          "id": "ceqk3qe3r0kw",
+          "name": "General",
+          "pages": [
+            {
+              "id": "kog07cpmr0kw",
+              "title": "Untitled page",
+              "content": "# Untitled page\n# Reset Network Settings\n\nIf DNS resolution isn't working, try:\n\n```cmd\nipconfig /flushdns\n```\n\nView all network adapters:\n\n```powershell\nGet-NetAdapter\n```\n\nRestart a network adapter:\n\n```powershell\nDisable-NetAdapter -Name \"Ethernet\"\nEnable-NetAdapter -Name \"Ethernet\"\n```\n\n## Verify Connectivity\n\n```cmd\nping 8.8.8.8\nping google.com\n```\n\n## Useful Notes\n\n- `ping 8.8.8.8` tests Internet connectivity.\n- `ping google.com` tests DNS resolution.",
+              "updated": 1792160459012
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "opw2b54url2v",
+      "name": "Software",
+      "icon": "folder",
+      "sections": [
+        {
+          "id": "pffq9k4yrl2v",
+          "name": "General",
+          "pages": [
+            {
+              "id": "xdbb4jx8rl2v",
+              "title": "Open Any Downloaded Project",
+              "content": "# Open Any Downloaded React / Node.js Project\n\n## Prerequisites\n\nVerify Node.js and npm are installed:\n\n```powershell\nnode -v\nnpm -v\n```\n\nYou should see version numbers returned.\n\n---\n\n## Open the Project Folder\n\nNavigate to the project folder:\n\n```powershell\ncd \"C:\\Path\\To\\Your\\Project\"\n```\n\nExample:\n\n```powershell\ncd \"C:\\Users\\msisd\\Documents\\IT companion\"\n```\n\n---\n\n## Install Dependencies\n\nFirst time opening a project:\n\n```powershell\nnpm install\n```\n\nIf dependency errors occur:\n\n```powershell\nnpm install --legacy-peer-deps\n```\n\nWait for a successful message similar to:\n\n```text\nadded xxx packages\nfound 0 vulnerabilities\n```\n\n---\n\n## Start the Application\n\nRun:\n\n```powershell\nnpm run dev\n```\n\nLook for output similar to:\n\n```text\nVITE ready\n\nLocal: http://localhost:8080/\n```\n\nor\n\n```text\nLocal: http://localhost:5173/\n```\n\nOpen the Local URL in your browser.\n\n---\n\n## Stop the Application\n\nPress:\n\n```text\nCtrl + C\n```\n\nThen confirm if prompted.\n\n---\n\n## Common Problems\n\n### Missing File\n\nError:\n\n```text\nFailed to resolve import \"./SomeFile\"\n```\n\nCheck:\n\n- File exists\n- File name is spelled correctly\n- No \"(1)\" was added to the filename\n- Letter casing matches exactly\n\nExample:\n\n```text\nCodeBlock.tsx ✅\nCodeBlock (1).tsx ❌\n```\n\n---\n\n### Reinstall Dependencies\n\nDelete existing dependencies and reinstall:\n\n```powershell\nRemove-Item -Recurse -Force node_modules\nRemove-Item package-lock.json\nnpm install\n```\n\n---\n\n### Port Already In Use\n\nError:\n\n```text\nPort 8080 is already in use\n```\n\nVite usually chooses another port automatically.\n\nLook for a different Local URL such as:\n\n```text\nLocal: http://localhost:8081/\n```\n\n---\n\n## Useful Commands\n\nCheck Node version:\n\n```powershell\nnode -v\n```\n\nCheck npm version:\n\n```powershell\nnpm -v\n```\n\nInstall dependencies:\n\n```powershell\nnpm install\n```\n\nStart development server:\n\n```powershell\nnpm run dev\n```\n\nBuild production version:\n\n```powershell\nnpm run build\n```\n\nPreview production build:\n\n```powershell\nnpm run preview\n```",
+              "updated": 1792160530572
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
