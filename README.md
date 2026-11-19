@@ -1,17 +1,11 @@
-# Welcome to my IT Companion project
+# IT Companion
 
-This project was built with [Lovable](https://lovable.dev).
+A portable app for field work. I help local seniors with computer issues, mostly internet-related, and I'm building this into a portable knowledge library I can use on those visits.
 
-## Build with Lovable
-
-Because I am still learning. Now that I have the files. I am going to go through them and start adding and editing, This I have found has been the best practice for me. As I learn how the code reads, and understand then what the symbolks mean.
-
-It also helps me learn, downloading, starting the npm and finding the local ports.
-
-This is intended to be a portable app for field work. I assist local elders with computer issues. Mostly internet related. Since I know I lot but not everything. I am compiling my knowledge into a portal library for those occasions. 
+## How I'm building it
+The first version was generated with Lovable. I'm now working through the code myself, adding and editing features to learn how the code reads, how npm works and how to run it locally.
 
 ## Built with
-
 - TanStack Start
 - TypeScript
 - React
